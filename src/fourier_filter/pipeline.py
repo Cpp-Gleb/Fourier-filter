@@ -59,6 +59,10 @@ class BinarySignalLoader:
         self._expected_samples = expected_samples
 
     def infer_dtype(self, file_path: Path) -> str:
+        if file_path.suffix.lower() == ".npy":
+            array = np.load(file_path, allow_pickle=False)
+            return str(array.dtype)
+
         file_size = file_path.stat().st_size
         matches = [
             dtype_name
@@ -78,6 +82,22 @@ class BinarySignalLoader:
         )
 
     def load(self, file_path: Path, dtype_name: str, endianness: str) -> np.ndarray:
+        if file_path.suffix.lower() == ".npy":
+            signal = np.load(file_path, allow_pickle=False)
+
+            signal = np.asarray(signal)
+
+            if signal.ndim != 1:
+                signal = signal.reshape(-1)
+
+            if signal.size != self._expected_samples:
+                raise ValueError(
+                    f"Expected {self._expected_samples} samples, but got {signal.size} "
+                    f"from NPY file {file_path.name}."
+                )
+
+            return signal.astype(np.float64, copy=False)
+
         resolved_dtype_name = self.infer_dtype(file_path) if dtype_name == "auto" else dtype_name
         if resolved_dtype_name not in self._NUMPY_DTYPES:
             supported = ", ".join(sorted(self._NUMPY_DTYPES))
@@ -99,8 +119,6 @@ class BinarySignalLoader:
             )
 
         return signal.astype(np.float64, copy=False)
-
-
 class FourierSignalAnalyzer:
     def __init__(self, config: SignalConfig) -> None:
         self._config = config

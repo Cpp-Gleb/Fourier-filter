@@ -32,7 +32,7 @@ class DemoSignalGenerator:
 
 def main() -> None:
     generator = DemoSignalGenerator(
-        samples=100_000,
+        samples=300_000,
         dt_seconds=0.0001,
         random_seed=42,
     )

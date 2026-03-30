@@ -1,0 +1,4 @@
+Detected useful frequencies (Hz):
+- 799.998657 Hz (bin=8000, amplitude=1.000084)
+- 2740.004566 Hz (bin=27400, amplitude=0.912261)
+- 2440.002058 Hz (bin=24400, amplitude=0.884818)
